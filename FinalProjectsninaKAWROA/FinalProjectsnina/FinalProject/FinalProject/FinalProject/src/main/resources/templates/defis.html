@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Défis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Ajoutez Bootstrap CSS et JS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="font-[Poppins] flex w-full justify-center items-center bg-black mt-10">
+    <div class="relative flex flex-col w-10/12 p-5 m-10 justify-center items-center">
+        <!-- Placez ceci dans la partie de la barre de navigation où vous souhaitez afficher le score -->
+        <span id="userScore">Solde : <span th:utext="${#authentication.principal.score}"></span></span>
+
+        <div class="w-full text-center">
+            <h2 class="text-2xl font-semibold my-8 w-full py-2 bg-gray-900 rounded-lg text-violet-500 shadow-2xl">Liste
+                des Défis</h2>
+
+            <div class="grid grid-cols-4 gap-10 w-full">
+                <!-- Afficher les défis -->
+                <div th:each="defi : ${defis}"
+                    class="relative w-full justify-center items-center flex flex-col bg-gray-900 rounded-lg shadow-2xl p-3">
+                    <span class="text-center mb-3">
+                        <p th:text="${defi.nom}" class="font-semibold text-lg text-violet-500"></p>
+                        <p th:text="${defi.description}" class="text-sm text-gray-400"></p>
+                        <p th:text="${defi.date}" class="text-sm text-gray-400"></p>
+                        <p class="text-sm text-gray-400">
+                            <span th:id="'defi-' + ${defi.id}" th:if="${defi.defiAccomplit}">Accompli</span>
+                            <span th:id="'defi-' + ${defi.id}" th:unless="${defi.defiAccomplit}">Non accompli</span>
+                        </p>
+                        <p th:text="'+'+${defi.recompense}+' points'" class="text-sm text-gray-400"></p>
+                        <!-- Ajoutez cela à l'intérieur de la boucle qui itère sur les défis -->
+                        <button th:onclick="'showPopup(' + ${defi.id} + ')'"
+                            class="text-sm text-gray-400">Etat de mon défi</button>
+                    </span>
+                    <!-- Ajoutez d'autres balises pour les actions sur le défi si nécessaire -->
+                </div>
+            </div>
+        </div>
+
+       <!-- Ajoutez cette partie pour afficher les badges de l'utilisateur -->
+<div class="mt-4">
+    <h3 class="text-lg font-semibold text-violet-500">Badges :</h3>
+    <ul>
+        <li th:each="badge : ${utilisateurBadges}">
+            <p th:text="${badge.badge.description}"></p>
+            <img th:src="${'data:image/png;base64,' + badge.badge.base64Image}" alt="Badge Image"/>
+        </li>
+    </ul>
+</div>
+
+
+    <!-- Fenêtre modale Bootstrap -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Sélectionnez l'état du défi :</p>
+                    <button id="confirmButton" onclick="updateDefiStatus()">Accompli</button>
+                    <button onclick="closeModal()">Non accompli</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(defiId) {
+            $('#myModal').modal('show');
+            $('#myModal').find('#confirmButton').data('defiId', defiId);
+        }
+
+        function closeModal() {
+            $('#myModal').modal('hide');
+        }
+
+        function updateDefiStatus() {
+            var defiId = $('#myModal').find('#confirmButton').data('defiId');
+            var csrfToken = $("meta[name='_csrf']").attr("content");
+
+            var defiElement = $('#defi-' + defiId);
+
+            $.ajax({
+                type: "POST",
+                url: "/defis/" + defiId + "/accompli",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+                },
+                success: function (response) {
+                    console.log("Success: " + response);
+                    alert(response);
+
+                    // Update the UI for the specific defi element
+                    defiElement.text('Accompli');
+                    defiElement.removeClass('defi-non-accomplit').addClass('defi-accomplit');
+
+                    // Update the user score in the UI
+                    var newScore = response.split(' ').pop();
+                    $('#userScore > span').text(newScore);
+
+                    // Update the user score in the specific defi element
+                    var userScoreElement = defiElement.closest('.flex').find('#userScore > span');
+                    userScoreElement.text(newScore);
+
+                    // Check if the new score is 300 or more
+                    if (parseInt(newScore) >= 300) {
+                        showCongratulationsPopup();
+                    }
+
+                    $('#myModal').modal('hide');
+                },
+                error: function (error) {
+                    console.log("Error: " + error);
+                    alert("Une erreur s'est produite lors de la mise à jour du défi");
+                }
+            });
+        }
+
+        function initUserScore() {
+            $.ajax({
+                type: "GET",
+                url: "/defis/get-user-score",
+                cache: false, // Ajoutez cette ligne pour éviter la mise en cache
+                success: function (response) {
+                    var userScore = JSON.parse(response).score;
+                    $('#userScore > span').text(userScore);
+                },
+                error: function (error) {
+                    console.log("Error initializing user score: " + error);
+                }
+            });
+        }
+
+        // Initialize user score on page load
+        $(document).ready(function () {
+            initUserScore();
+        });
+
+        // Function to show the congratulations pop-up
+        function showCongratulationsPopup() {
+            // You can use Bootstrap modal or any other library to display the pop-up
+            alert("Félicitations ! Vous avez atteint un score de 300. Vous avez gagné un badge !");
+        }
+    </script>
+</body>
+
+</html>

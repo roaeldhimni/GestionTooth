@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-red-50" >
+	
+<div th:switch="${users}" class="relative flex flex-col w-10/12 p-5 m-10 justify-center items-center mt-20 ml-auto mr-1.5">
+			<div th:replace="sidebar.html"></div>
+
+
+    
+    
+    
+    <h2 th:case="null" class="text-xl font-semibold my-4">No Data To Display!</h2>
+    <div th:case="*" class="w-full text-center">
+		
+            <h2 class="text-2xl font-semibold my-1 w-full py-2  rounded-lg text-pink-500  ">Snina's' List</h2>
+        <div class="grid grid-cols-4 gap-10 w-full ">
+            <div th:each="user : ${users}" class="relative w-full justify-center items-center flex flex-col bg-red-50 rounded-lg shadow-2xl p-3 ">
+
+                <span class="text-center mb-3">
+                    <p th:text="${user.name}" class="font-semibold text-lg text-pink-500"></p>
+                   
+
+
+
+                </span>
+                <a th:href="@{/snina/deleteUser/{id}(id=${user.id})}">
+                    <i class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-pink-600 hover:text-yellow-500 hover:scale-125"></i>
+                </a>
+                <a th:href="@{/snina/editUser/{id}(id=${user.id})}">
+                    <i class="bi bi-pencil-square absolute top-1 right-2 text-lg text-pink-600 hover:text-yellow-500 hover:scale-125"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${mode eq 'add' or mode eq 'update'} "
+         class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50  backdrop-blur-sm">
+        <div class="relative h-3/5 w-1/4  border-4 border-pink-700 rounded-lg flex items-center justify-center shadow-xl border ">
+            <form th:action="${mode eq 'add' ? '/snina/addUtilisateur' : '/snina/updateUser/' + user.id}"
+                  th:object="${user}" method="post" class="w-full flex flex-col items-center justify-center bg-red-50 ">
+                <input type="text" hidden="hidden" th:field="*{id}"/>
+              
+                <span th:switch="${mode}" class="text-pink-600">
+                    <p th:case="'add'" class="text-xl font-semibold mb-4">Add dent</p>
+                    <p th:case="'update'" class="text-xl font-semibold mb-4">Update dent</p>
+                </span>
+
+                <div class="mb-4 ">
+                    <label for="name" class="block text-sm font-medium text-gray-900 font-semibold">name:</label>
+                    <input id="name" th:field="*{name}" type="text" placeholder="Enter your name"
+                           class="rounded  text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-pink-700 ">
+                </div>
+                
+                <span>
+                     <button type="submit" class="bg-pink-600 text-white font-medium px-4 py-1.5 rounded-md hover:bg-yellow-400">Submit</button>
+                    <a href="/snina" class="absolute top-2 right-2 text-yellow-600 ">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </span>
+
+            </form>
+        </div>
+        
+        
+        
+    </div>
+    <br><br>
+      <a href="/snina/adduser"
+   class="mx-auto bottom-9 px-2 py-1 rounded font-semibold text-white bg-pink-600 hover:bg-pink-500">
+   <i class="bi bi-plus-circle mr-2 text-lg">Ajouter une dent</i>
+</a>
+        
+</div>
+</body>
+</html>

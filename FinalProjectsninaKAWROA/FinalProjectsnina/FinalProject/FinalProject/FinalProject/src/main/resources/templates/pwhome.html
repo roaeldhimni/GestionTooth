@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body class="font-[Poppins] flex w-full justify-center items-center bg-pink-100 mt-10 ">
+	<div th:switch="${pws}" class="relative flex flex-col w-10/12 p-5 m-10  justify-center items-center mt-20 ml-auto mr-1.5 ">
+					<div th:replace="sidebar.html"></div>
+
+		
+
+		<div th:case="*" class="w-full text-center">
+			            <h2 class="text-2xl font-semibold my-1 w-full py-2  rounded-lg text-pink-500  ">PW List</h2>
+
+			<div class="grid grid-cols-4 gap-10 w-full ">
+				<div th:each="pw : ${pws}"
+					class="relative w-full justify-center  items-center flex flex-col bg-gray-900 rounded-lg shadow-2xl p-3 h-auto bg-red-50">
+					<span class="text-center mb-8">
+					  <p th:text="${pw.title}" class="text-sm text-pink-600 bold"></p>
+
+						<p th:text="${pw.objectif}" class="text-sm text-gray-600"></p>
+						<p th:text="${pw.tooth.name}" class="text-sm text-gray-600"></p>
+						<ul>
+							<li th:each="groupe : ${pw.groupes}" th:text="${groupe.code + ' - ' + groupe.year}"
+								class="text-sm text-gray-600"></li>
+						</ul>
+						
+						<form th:action="@{'/pw/delete/' + ${pw.id}}" method="post" enctype="multipart/form-data">
+							<button type="submit" onclick="return confirm('Are you sure you want to delete this PW?')">
+								<i
+									class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-pink-600 hover:text-yellow-500 hover:scale-125"></i>
+							</button>
+						</form>
+
+
+						<form th:action="@{'/pw/edit/' + ${pw.id}}" method="get">
+							<button type="submit">
+								<i
+									class="bi bi-pencil absolute top-1 right-2 text-lg text-pink-600 hover:text-pink-500 hover:scale-125"></i>
+							</button>
+						</form>
+						 <!-- Add the download button -->
+        <a th:href="@{'/pw/download/' + ${pw.id}}" class="bg-pink-700 text-white font-medium px-4 py-1.5 rounded-md hover:bg-blue-700" download>
+            <i class="bi bi-cloud-download mr-2"></i>Download PW
+        </a>
+						
+
+					</span>
+
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<div th:if="${mode eq 'add' or mode eq 'update'} "
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50  backdrop-blur-sm">
+			<div
+				class="relative h-5/5 w-1/4  border-4  rounded-lg flex items-center justify-center shadow-xl border ">
+				<form th:action="${mode eq 'add' ? '/pw/addadd' : '/pw/update/' + pw.id}" th:object="${pw}"
+					method="post" class="w-full flex flex-col items-center justify-center bg-red-50" enctype="multipart/form-data">
+					<input type="text" hidden="hidden" th:field="*{id}" />
+
+					<span th:switch="${mode}" class="text-pink-600">
+						<p th:case="'add'" class="text-xl font-semibold mb-4">Add PW</p>
+						<p th:case="'update'" class="text-xl font-semibold mb-4">Update PW</p>
+					</span>
+
+
+
+					<div class="mb-4 ">
+						<label for="title" class="block text-sm font-medium text-gray-900 font-semibold">Title:</label>
+						<input id="title" th:field="*{title}" type="text" placeholder="Enter title"
+							class="rounded  text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700 ">
+					</div>
+
+					<!-- Ajoutez d'autres champs de votre entité PW ici -->
+					<div class="mb-4 px-10">
+						<label for="objectif"
+							class="block text-sm font-medium text-gray-900 font-semibold">Objectif:</label>
+						<textarea id="objectif" th:field="*{objectif}" placeholder="Enter objectif"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700"></textarea>
+					</div>
+
+					<!-- Modify the existing textarea for docs to include a file input -->
+<!--<div class="mb-4 px-10">
+    <label for="docs" class="block text-sm font-medium text-gray-500 font-semibold">Docs:</label>
+    <input type="file" id="docsFile" name="docsFile" class="my-2">
+</div>--><div class="mb-4 px-10">
+    <label for="docsFile" class="block text-sm font-medium text-gray-500 font-semibold">Docs:</label>
+    <div class="relative">
+        <input type="file" id="docsFile" name="docsFile" class="my-2 opacity-0 absolute z-0">
+        <div class="flex items-center justify-between w-full bg-white border rounded text-sm py-2 px-10 my-2 border-pink-500">
+            <span id="fileName" class="text-black">Choose a file...</span>
+            <label for="docsFile" class="cursor-pointer text-black hover:text-violet-800">
+                Browse
+            </label>
+        </div>
+    </div>
+</div>
+
+					<div class="mb-4 px-10">
+						<label for="tooth" class="block text-sm font-medium text-gray-900 font-semibold">Tooth:</label>
+						<select id="tooth" th:field="*{tooth.id}"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700">
+							<option th:each="tooth : ${teeth}" th:value="${tooth.id}" th:text="${tooth.name}"></option>
+						</select>
+					</div>
+
+					<div class="mb-4 px-10">
+    <label class="block text-sm font-medium text-gray-900 font-semibold">Groupes:</label>
+    <div class="flex flex-wrap gap-2">
+        <div th:each="groupe : ${groupes}" class="flex items-center">
+            <input type="checkbox" id="groupe_${groupe.id}" name="selectedGroupes"
+                   th:value="${groupe.id}"
+                   class="rounded text-violet-700 border-pink-500 focus:outline-none focus:ring focus:border-violet-700"/>
+            <label for="groupe_${groupe.id}" class="text-sm ml-2 text-gray-900"
+                   th:text="${groupe.code + ' - ' + groupe.year}"></label>
+        </div>
+    </div>
+</div>
+
+
+					<!-- Ajoutez d'autres champs de votre entité ici -->
+
+					<span>
+						<button type="submit"
+							class="bg-pink-600 text-white font-medium px-4 py-1.5 rounded-md hover:bg-pink-400">Submit</button>
+						<a href="/pw/home" class="absolute top-2 right-2 text-pink-600 ">
+							<i class="bi bi-x-lg"></i>
+						</a>
+					</span>
+
+
+
+				</form>
+			</div>
+		</div>
+		<br>
+		  <a href="/pw/add"
+   class="mx-auto bottom-9 px-2 py-1 rounded font-semibold text-white bg-pink-600 hover:bg-pink-500">
+   <i class="bi bi-plus-circle mr-2 text-lg">Ajouter un PW</i>
+</a>
+        
+		
+	</div>
+</body>

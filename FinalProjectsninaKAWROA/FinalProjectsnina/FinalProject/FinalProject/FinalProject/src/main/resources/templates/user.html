@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body  >
+	
+<div th:switch="${users}" class=" relative flex flex-col w-10/12 p-5 m-10 justify-center items-center  mt-20 ml-auto mr-1.5">
+	    <div th:replace="sidenavadmin.html"></div>
+
+
+<!--<div th:if="${isLoggedIn}" class="welcome-message text-center mt-4">
+    <h2 th:text="'Welcome, ' + ${loggedInUser.name} + '!'"></h2>
+</div>-->
+
+    
+    <a href="/admin/adduser" class="absolute top-1 left-5 px-2 py-1 rounded font-semibold text-white bg-pink-600  hover:bg-violet-500">
+        <i class="bi bi-plus-circle mr-2 text-lg"></i>Add new
+    </a>
+    
+   
+    
+    
+    <h2 th:case="null" class="text-xl font-semibold my-4">No Data To Display!</h2>
+    <div th:case="*" class="w-full text-center">
+		
+        <h2 class="text-2xl font-semibold my-8 w-full py-2 bg-gray-900 rounded-lg text-pink-600 shadow-2xl bg-red-100">Professor's List</h2>
+        <div class="grid grid-cols-4 gap-10 w-full ">
+            <div th:each="user : ${users}" class="relative w-full justify-center items-center flex flex-col bg-gray-900 rounded-lg shadow-2xl p-3  bg-red-50">
+
+                <span class="text-center mb-3">
+                    <p th:text="${user.name}" class="font-semibold text-lg text-pink-600"></p>
+                    <!--<p th:text="${user.prename}" class="text-sm text-gray-400"></p>-->
+                    <p th:text="${user.mobileNo}" class="text-sm text-gray-900"></p>
+                    <p th:text="${user.email}" class="text-sm text-gray-900"></p>
+
+
+
+                </span>
+                <a th:href="@{/admin/deleteUser/{id}(id=${user.id})}">
+                    <i class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-pink-600 hover:text-yellow-500 hover:scale-125"></i>
+                </a>
+                <a th:href="@{/admin/editUser/{id}(id=${user.id})}">
+                    <i class="bi bi-pencil-square absolute top-1 right-2 text-lg text-pink-600 hover:text-yellow-500 hover:scale-125"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${mode eq 'add' or mode eq 'update'} "
+         class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50  backdrop-blur-sm">
+<div class="relative mx-4 sm:mx-auto w-full max-w-screen-sm  border-4  rounded-lg flex items-center justify-center shadow-xl border p-4">
+            <form th:action="${mode eq 'add' ? '/admin/addUtilisateur' : '/admin/updateUser/' + user.id}"
+                  th:object="${user}" method="post" class="w-full flex flex-col items-center justify-center bg-red-50 ">
+                <input type="text" hidden="hidden" th:field="*{id}"/>
+              
+                <span th:switch="${mode}" class="text-pink-600">
+                    <p th:case="'add'" class="text-xl font-semibold mb-4">Add Professor</p>
+                    <p th:case="'update'" class="text-xl font-semibold mb-4">Update Professor</p>
+                </span>
+
+                <div class="mb-4 ">
+                    <label for="name" class="block text-sm font-medium text-gray-900 font-semibold">name:</label>
+                    <input id="name" th:field="*{name}" type="text" placeholder="Enter your name"
+                           class="rounded  text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700 ">
+                </div>
+                <div class="mb-4 px-10">
+                    <label for="email" class="block text-sm font-medium text-gray-900 font-semibold">Email:</label>
+                    <input id="email" th:field="*{email}" type="text" placeholder="Enter your email"
+                           class="rounded text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700  ">
+                </div>
+                
+               <div class="mb-4 px-10">
+    <label for="password" class="block text-sm font-medium text-gray-900 font-semibold">Password:</label>
+    <input id="password" th:field="*{password}" type="password" placeholder="Enter your password"
+           class="rounded text-sm py-2 px-10 my-2 bg-white text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700  ">
+</div>
+                <div class="mb-4 px-10">
+                    <label for="mobileNo" class="block text-sm font-medium text-gray-900 font-semibold">Tel:</label>
+                    <input id="mobileNo" th:field="*{mobileNo}" type="text" placeholder="Enter your tel"
+                           class="rounded text-sm py-2 px-10 my-2 bg-white border text-black border-violet-500 focus:outline-none focus:ring focus:border-violet-700  ">
+                </div>
+                <div class="mb-4 px-10">
+                    <label for="grade" class="block text-sm font-medium text-gray-900 font-semibold">Grade:</label>
+                    <input id="grade" th:field="*{grade}" type="text" placeholder="Enter your grade"
+                           class="rounded text-sm py-2 px-10 my-2 bg-white border text-black border-pink-500 focus:outline-none focus:ring focus:border-violet-700  ">
+                </div>
+                <!-- Add other user attributes as needed -->
+
+                <span>
+                     <button type="submit" class="bg-pink-600 text-white font-medium px-4 py-1.5 rounded-md hover:bg-yellow-400">Submit</button>
+                    <a href="/admin" class="absolute top-2 right-2 text-yellow-600 ">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </span>
+
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

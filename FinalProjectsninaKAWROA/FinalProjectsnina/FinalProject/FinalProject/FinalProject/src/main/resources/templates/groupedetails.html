@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Groupe Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-pink-100">
+
+    <div class="w-full text-center p-4">
+        <h3 class="text-2xl font-semibold my-8 py-2 bg-pink-200 rounded-lg text-center text-pink-600 shadow-2xl">Associated Students </h3>
+
+        <div class="flex flex-wrap"> <!-- Ajout de la classe flex-wrap pour permettre le retour à la ligne -->
+            <div th:each="student : ${students}" class="w-full sm:w-1/2 md:w-1/4 lg:w-1/5 xl:w-1/5 px-4 mb-4 ml-auto">
+                <div th:replace="sidebar.html"></div>
+                <!-- Utilisation de classes de largeur spécifique en fonction de la taille de l'écran -->
+                <div class="relative bg-pink-100 p-6 rounded-lg shadow-lg ml-auto"> <!-- Ajout de ml-auto pour décaler à droite -->
+                    <div class="flex flex-col items-center ">
+                        <p th:text="${student.name}" class="font-semibold text-2xl text-pink-500 mb-2"></p>
+
+                        <div class="flex my-2">
+                            <p class="w-2/4 font-semibold text-pink-800 mr-2">Mobile:</p>
+                            <p th:text="${student.mobileNo}" class="w-3/4 font-semibold text-pink-500 mb-2"></p>
+                        </div>
+                        <div class="flex my-2">
+                            <p class="w-2/4 font-semibold text-pink-800 mr-2">Email:</p>
+                            <p th:text="${student.email}" class="w-3/4 font-semibold text-pink-500 mb-2"></p>
+                        </div>
+                        <div class="flex my-2">
+                            <p class="w-2/4 font-semibold text-pink-800 mr-2">Groupe:</p>
+                            <p th:text="${student.groupe.code + ' - ' + student.groupe.year}" class="w-3/4 font-semibold text-pink-500 mb-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="text-2xl font-semibold my-8 py-2  bg-pink-200  text-center  rounded-lg text-pink-600 shadow-2xl">Associated PWs</h3>
+
+        <div class="bg-pink-100 flex flex-wrap">
+            <!-- Vos cards PW ici -->
+            <div th:each="pw : ${pws}" class="relative w-full sm:w-1/2 md:w-1/3 lg:w-1/3 xl:w-1/3 p-6 rounded-lg shadow-lg mx-4 mb-4 ml-auto"> <!-- Ajout de ml-auto pour décaler à droite -->
+                <div class="text-center mb-3">
+                    <p th:text="${pw.title}" class="font-semibold text-lg text-pink-600 mb-2"></p>
+                    <p th:text="${pw.objectif}" class="text-sm text-gray-600"></p>
+                    <br>
+                    <a th:href="@{'/pw/download/' + ${pw.id}}" class="bg-pink-700 text-white font-medium px-4 py-1.5 rounded-md hover:bg-blue-700" download>
+                        <i class="bi bi-cloud-download mr-2"></i>Download PW
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <a href="/home" class="bg-pink-600 text-white font-medium px-4 py-2 rounded-md hover:bg-yellow-400 ">Back to Student List</a>
+    </div>
+
+</body>
+
+</html>

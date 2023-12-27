@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <!-- Include Tailwind CSS styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-red-100">
+
+    <!-- Tailwind CSS content applied to Thymeleaf template -->
+    <section class="h-screen">
+        <div class="container h-full px-6 py-24">
+            <div class="g-6 flex h-full flex-wrap items-center justify-center lg:justify-between">
+                <!-- Left column container with background-->
+                <div class="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6554/6554888.png" class="w-full" alt="Phone image" />
+                </div>
+
+                <!-- Right column container with form -->
+                <div class="md:w-8/12 lg:ml-6 lg:w-5/12">
+                    <form action="userLogin" method="post" class="mb-3 border rounded-lg p-6 bg-red-50">
+                        <!-- Form title -->
+                        <h2 class="text-2xl font-bold mb-6">Login</h2>
+
+                        <!-- Email input -->
+                        <div class="relative mb-4">
+                            <label for="username" class="block text-black-500 text-sm font-semibold mb-1">Email address</label>
+                            <input type="text" class="peer block w-full rounded border bg-gray-200 px-3 py-2 outline-none focus:border-blue-500 transition-all duration-200 ease-linear" id="username" name="username" />
+                        </div>
+
+                        <!-- Password input -->
+                        <div class="relative mb-4">
+                            <label for="password" class="block text-black-500 text-sm font-semibold mb-1">Password</label>
+                            <input type="password" class="peer block w-full rounded border bg-gray-200 px-3 py-2 outline-none focus:border-blue-500 transition-all duration-200 ease-linear" id="password" name="password" />
+                        </div>
+
+                        <!-- Remember me and Forgot password links -->
+                        <div class="flex items-center justify-between mb-4">
+                            <label for="remember" class="flex items-center font-semibold">
+                                <input type="checkbox" id="remember" name="remember" class="mr-2">
+                                <span class="text-black-600">Remember me</span>
+                            </label>
+                            <a href="/forgotPassword" class="text-sm font-semibold text-black-600 hover:text-black-200">Forgot password?</a>
+                        </div>
+
+                        <!-- Submit button -->
+<button type="submit" class="inline-block w-full rounded bg-red-300 px-4 py-2 text-sm font-medium uppercase transition duration-150 ease-in-out hover:bg-red-400 focus:outline-none focus:ring focus:border-blue-300 active:bg-red-700">
+    LOGIN
+</button>
+
+
+                        <!-- Register link -->
+                        <div class="flex justify-center my-4">
+                            <a href="/register" class="btn-secondary-link font-semibold">
+                                Don't have an account? Register
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

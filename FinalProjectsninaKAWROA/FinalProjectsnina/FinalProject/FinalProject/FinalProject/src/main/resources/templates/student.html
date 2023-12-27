@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-pink-100">
+
+	<div th:switch="${users}"
+		class="relative flex flex-col w-10/12 p-5 m-10 justify-center items-center mt-20 ml-auto mr-1.5">
+		<div th:replace="sidebar.html"></div>
+
+		
+
+		<h2 th:case="null" class="text-xl font-semibold my-4">No Data To Display!</h2>
+		<div th:case="*" class="w-full text-center">
+
+			            <h2 class="text-2xl font-semibold my-1 w-full py-2  rounded-lg text-pink-400  ">Student List</h2>
+
+			<div class="grid grid-cols-4 gap-10 w-full ">
+				<div th:each="user, userIndex : ${users}"
+					class="relative w-full justify-center items-center flex flex-col bg-pink-200 rounded-lg shadow-2xl p-3 ">
+
+					<span class="text-center mb-3">
+						<img th:if="${user.photo != null and encodedPhotos != null and encodedPhotos[userIndex.index] != null}"
+							th:src="'data:image/jpeg;base64,' + ${encodedPhotos[userIndex.index]}" alt="Student Photo"
+							style="border-radius: 50%; width: 100px; height: 100px; display: block; margin: 0 auto;" />
+
+						<p th:text="${user.name}" class="font-semibold text-lg text-pink-500"></p>
+						<!--<p th:text="${user.prename}" class="text-sm text-gray-400"></p>-->
+						<p th:text="${user.mobileNo}" class="text-sm text-gray-600"></p>
+						<p th:text="${user.email}" class="text-sm text-gray-600"></p>
+						<p th:text="${user.number}" class="text-sm text-gray-600"></p>
+					</span>
+
+
+					<a th:href="@{/student/details/{id}(id=${user.id})}">
+						<i
+							class="bi bi-info-circle absolute bottom-1 left-2 text-lg text-pink-500 hover:text-blue-500 hover:scale-125"></i>
+					</a>
+					<a th:href="@{/student/deleteUser/{id}(id=${user.id})}">
+						<i
+							class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-pink-500 hover:text-yellow-500 hover:scale-125"></i>
+					</a>
+					<a th:href="@{/student/editUser/{id}(id=${user.id})}">
+						<i
+							class="bi bi-pencil-square absolute top-1 right-2 text-lg text-pink-500 hover:text-yellow-500 hover:scale-125"></i>
+					</a>
+
+				</div>
+			</div>
+		</div>
+
+		<div th:if="${mode eq 'add' or mode eq 'update'} "
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50  backdrop-blur-sm bg-pink">
+			<div
+				class="relative mx-4 sm:mx-auto w-full max-w-screen-sm  border-4 border-pink-500 rounded-lg flex items-center justify-center shadow-xl border  p-4">
+				<form th:action="${mode eq 'add' ? '/student/addUtilisateurr' : '/student/updateUser/' + user.id}"
+					th:object="${user}" method="post" enctype="multipart/form-data"
+					class="w-full flex flex-col items-center justify-center bg-pink-100 ">
+
+					<input type="text" hidden="hidden" th:field="*{id}" />
+
+					<span th:switch="${mode}" class="text-pink-700">
+						<p th:case="'add'" class="text-xl font-semibold mb-4">Add Student</p>
+						<p th:case="'update'" class="text-xl font-semibold mb-4">Update Student</p>
+					</span>
+
+					<div class="mb-4">
+						<label for="name" class="block text-sm font-medium text-gray-700 font-semibold">name:</label>
+						<input id="name" th:field="*{name}" type="text" placeholder="Enter your name"
+							class="rounded text-sm py-2 px-10 my-2 bg-black-100 border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700 ">
+					</div>
+					<div class="mb-4 px-10">
+						<label for="email" class="block text-sm font-medium text-gray-700 font-semibold">Email:</label>
+						<input id="email" th:field="*{email}" type="text" placeholder="Enter your email"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700  ">
+					</div>
+
+					
+					
+					<div class="mb-4 px-10">
+    <label for="docsFile" class="block text-sm font-medium text-gray-500 font-semibold">Image:</label>
+    <div class="relative">
+        <input type="file" accept="image/*" id="photoFile" name="photoFile" class="my-2 opacity-0 absolute z-0">
+        <div class="flex items-center justify-between w-full bg-white border rounded text-sm py-2 px-10 my-2 border-pink-500">
+            <span id="photoName" name="photoFile" class="text-black">Choose a file...</span>
+            <label for="photoFile" class="cursor-pointer text-black hover:text-violet-800">
+                Browse
+            </label>
+        </div>
+    </div>
+</div>
+
+
+					<div class="mb-4 px-10">
+						<label for="password"
+							class="block text-sm font-medium text-gray-700 font-semibold">Password:</label>
+						<input id="password" th:field="*{password}" type="password" placeholder="Enter your password"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700  ">
+					</div>
+					<div class="mb-4 px-10">
+						<label for="mobileNo" class="block text-sm font-medium text-gray-700 font-semibold">Tel:</label>
+						<input id="mobileNo" th:field="*{mobileNo}" type="text" placeholder="Enter your tel"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700  ">
+					</div>
+					<div class="mb-4 px-10">
+						<label for="groupe"
+							class="block text-sm font-medium text-gray-700 font-semibold">Groupe:</label>
+						<select id="groupe" th:field="*{groupe.id}"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700">
+							<option th:each="groupe : ${groupes}" th:value="${groupe.id}" th:text="${groupe.code+ ' - ' + groupe.year}">
+							</option>
+						</select>
+					</div>
+
+					<div class="mb-4 px-10">
+						<label for="number"
+							class="block text-sm font-medium text-gray-700 font-semibold">number:</label>
+						<input id="number" th:field="*{number}" type="number" placeholder="Enter your number"
+							class="rounded text-sm py-2 px-10 my-2 bg-white border text-black-700 border-pink-500 focus:outline-none focus:ring focus:border-pink-700  ">
+					</div>
+					<!-- Add other user attributes as needed -->
+
+					<span>
+						<button type="submit"
+							class="bg-pink-500 text-white font-medium px-4 py-1.5 rounded-md hover:bg-pink-500">Submit</button>
+						<a href="/student" class="absolute top-2 right-2 text-yellow-600 ">
+							<i class="bi bi-x-lg"></i>
+						</a>
+					</span>
+
+				</form>
+			</div>
+		</div>
+		
+		  <a href="/student/adduser"
+   class="mx-auto bottom-9 px-2 py-1 rounded font-semibold text-white bg-pink-600 hover:bg-pink-500">
+   <i class="bi bi-plus-circle mr-2 text-lg">Ajouter un étudiant</i>
+</a>
+		
+	</div>
+</body>
+
+</html>

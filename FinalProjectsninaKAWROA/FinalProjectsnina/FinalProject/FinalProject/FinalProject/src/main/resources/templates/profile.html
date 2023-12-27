@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+
+<body class="font-[Poppins] flex w-full justify-center items-center bg-orange-50 min-h-screen">
+    <div class="mx-4 my-10">
+        <div th:replace="sidebar.html"></div>
+        <div class="max-w-2xl w-full bg-red-50 shadow-md rounded-lg p-8">
+            <!-- Ajout de l'image ici -->
+            <div class="flex justify-center mb-4">
+                <img src="https://cdn-icons-png.flaticon.com/512/6554/6554888.png" alt="Image Profil" class="rounded-full w-20 h-20 object-cover" />
+            </div>
+
+            <form id="editProfForm" action="/profile/update" method="post" th:object="${professor}"
+                th:with="professor=${professor}" enctype="multipart/form-data">
+
+                <input type="hidden" id="pass" th:field="*{password}" />
+                <input type="hidden" id="id" th:field="*{id}" />
+
+                <div class="mb-4">
+                    <label for="email" class="block text-[18px] text-gray-800 font-serif dark:text-gray-200">Email:</label>
+                    <input type="text" id="email" name="email" th:field="*{email}"
+                        class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="username" class="block text-[18px] text-gray-800 font-serif dark:text-gray-200">Username:</label>
+                    <input type="text" id="username" name="username" th:field="*{name}"
+                        class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="grade" class="block text-[18px] text-gray-800 font-serif dark:text-gray-200">Grade:</label>
+                    <input type="text" id="grade" name="grade" th:field="*{grade}"
+                        class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="mobileNo" class="block text-[18px] text-gray-800 font-serif dark:text-gray-200">Mobile No:</label>
+                    <input type="text" id="mobileNo" name="mobileNo" th:field="*{mobileNo}"
+                        class="w-full p-2 border border-gray-300 rounded" />
+                </div>
+
+                <div class="flex justify-end">
+                    <input type="hidden" name="role" value="ROLE_USER">
+                    <button type="submit"
+                        class="py-2 px-4 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 focus:ring-4 focus:outline-none focus:ring-orange-300">Enregistrer les modifications</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
